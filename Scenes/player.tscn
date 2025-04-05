@@ -1,8 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://drc7f16f18fq4"]
+[gd_scene load_steps=12 format=3 uid="uid://drc7f16f18fq4"]
 
 [ext_resource type="Texture2D" uid="uid://ce8a1iidnal5k" path="res://Sprites/Character.png" id="1_v0iea"]
 [ext_resource type="Script" uid="uid://cpolpfk1qlj27" path="res://Scripts/player.gd" id="2_cvnsp"]
-[ext_resource type="Script" uid="uid://chq2qy7xjww5o" path="res://Scripts/camera_2d.gd" id="3_6t5aa"]
 
 [sub_resource type="Animation" id="Animation_6t5aa"]
 length = 0.001
@@ -209,9 +208,6 @@ autoplay = "idle"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)
 shape = SubResource("RectangleShape2D_cvnsp")
-
-[node name="Camera2D" type="Camera2D" parent="."]
-script = ExtResource("3_6t5aa")
 
 [node name="CoyoteTime" type="Timer" parent="."]
 wait_time = 0.1

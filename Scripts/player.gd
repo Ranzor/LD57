@@ -9,6 +9,9 @@ extends CharacterBody2D
 
 @export var knockback_force = 400
 @export var knockback_decay = 0
+
+@export var LevelGenerator = Node2D
+
 var knockback = Vector2.ZERO
 
 var current_depth = 0.0
@@ -26,7 +29,7 @@ var is_invincible = false
 
 @onready var animation = $AnimationPlayer
 @onready var sprite = $Sprite2D
-@onready var tilemap = $"../TileMapLayer"
+@onready var tilemap : TileMapLayer = get_tree().get_first_node_in_group("tiles")
 
 
 

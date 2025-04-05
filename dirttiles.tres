@@ -1,0 +1,19 @@
+[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://bbvjul663eycw"]
+
+[ext_resource type="Texture2D" uid="uid://cf0tlbmbttcee" path="res://Sprites/Dirt.png" id="1_16pmq"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qxrlw"]
+texture = ExtResource("1_16pmq")
+texture_region_size = Vector2i(8, 8)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4, 0, 4, 0.0323491, 4, 4, -4, 4)
+1:0/0 = 0
+1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4, 0, 4, 0.0323491, 4, 4, -4, 4)
+2:0/0 = 0
+2:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
+
+[resource]
+tile_size = Vector2i(8, 8)
+physics_layer_0/collision_layer = 3
+physics_layer_0/collision_mask = 3
+sources/0 = SubResource("TileSetAtlasSource_qxrlw")

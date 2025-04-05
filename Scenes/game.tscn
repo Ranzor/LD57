@@ -1,43 +1,18 @@
-[gd_scene load_steps=7 format=4 uid="uid://cdmp6arle0k4q"]
+[gd_scene load_steps=4 format=3 uid="uid://cdmp6arle0k4q"]
 
-[ext_resource type="Texture2D" uid="uid://cf0tlbmbttcee" path="res://Sprites/Dirt.png" id="1_ebmjs"]
+[ext_resource type="Script" uid="uid://jumheiw7631" path="res://Scripts/level_generator.gd" id="1_wowpa"]
 [ext_resource type="PackedScene" uid="uid://drc7f16f18fq4" path="res://Scenes/player.tscn" id="2_qxrlw"]
-[ext_resource type="Script" uid="uid://drjgs2guyshff" path="res://Scripts/tile_map_layer.gd" id="2_wrm1d"]
-[ext_resource type="PackedScene" uid="uid://jmgqh4c2hvbf" path="res://Scenes/bat.tscn" id="4_3dryh"]
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qxrlw"]
-texture = ExtResource("1_ebmjs")
-texture_region_size = Vector2i(8, 8)
-0:0/0 = 0
-0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4, 0, 4, 0.0323491, 4, 4, -4, 4)
-1:0/0 = 0
-1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4, 0, 4, 0.0323491, 4, 4, -4, 4)
-
-[sub_resource type="TileSet" id="TileSet_wrm1d"]
-tile_size = Vector2i(8, 8)
-physics_layer_0/collision_layer = 3
-physics_layer_0/collision_mask = 3
-sources/0 = SubResource("TileSetAtlasSource_qxrlw")
+[ext_resource type="Script" uid="uid://chq2qy7xjww5o" path="res://Scripts/camera_2d.gd" id="4_3dryh"]
 
 [node name="Game" type="Node2D"]
 
-[node name="Player" parent="." instance=ExtResource("2_qxrlw")]
-position = Vector2(56, 42)
+[node name="LevelGenerator" type="Node2D" parent="."]
+script = ExtResource("1_wowpa")
+
+[node name="Player" parent="." node_paths=PackedStringArray("LevelGenerator") instance=ExtResource("2_qxrlw")]
 collision_mask = 2
+LevelGenerator = NodePath("../LevelGenerator")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAAEAAYAAAAAAAAAAAAFAAYAAAAAAAAAAAAGAAYAAAAAAAAAAAAHAAYAAAAAAAAAAAAIAAYAAAAAAAAAAAAJAAYAAAAAAAAAAAAKAAYAAAAAAAAAAAALAAYAAAAAAAAAAAAMAAYAAAAAAAAAAAANAAYAAAAAAAAAAAAOAAYAAAAAAAAAAAAPAAYAAAAAAAAAAAAQAAYAAAAAAAAAAAARAAYAAAAAAAAAAAASAAYAAAAAAAAAAAATAAYAAAAAAAAAAAAUAAYAAAAAAAAAAAAVAAYAAAAAAAAAAAAWAAYAAAAAAAAAAAAXAAYAAAAAAAAAAAAYAAYAAAAAAAAAAAAZAAYAAAAAAAAAAAABAAQAAAAAAAAAAAACAAQAAAAAAAAAAAAbAAQAAAAAAAAAAAAcAAQAAAAAAAAAAAAdAAQAAAAAAAAAAAAEAAsAAAAAAAAAAAAFAAsAAAAAAAAAAAAGAAsAAAAAAAAAAAAHAAsAAAAAAAAAAAAIAAsAAAAAAAAAAAAJAAsAAAAAAAAAAAAKAAsAAAAAAAAAAAALAAsAAAAAAAAAAAAMAAsAAAAAAAAAAAANAAsAAAAAAAAAAAAOAAsAAAAAAAAAAAAPAAsAAAAAAAAAAAAQAAsAAAAAAAAAAAARAAsAAAAAAAAAAAASAAsAAAAAAAAAAAATAAsAAAAAAAAAAAAUAAsAAAAAAAAAAAAVAAsAAAAAAAAAAAAWAAsAAAAAAAAAAAAXAAsAAAAAAAAAAAAYAAsAAAAAAAAAAAAZAAsAAAAAAAAAAAAEABAAAAAAAAAAAAAFABAAAAAAAAAAAAAGABAAAAAAAAAAAAAHABAAAAAAAAAAAAAIABAAAAAAAAAAAAAJABAAAAAAAAAAAAAKABAAAAAAAAAAAAALABAAAAAAAAAAAAAMABAAAAAAAAAAAAANABAAAAAAAAAAAAAOABAAAAAAAAAAAAAPABAAAAAAAAAAAAAQABAAAAAAAAAAAAARABAAAAAAAAAAAAASABAAAAAAAAAAAAATABAAAAAAAAAAAAAUABAAAAAAAAAAAAAVABAAAAAAAAAAAAAWABAAAAAAAAAAAAAXABAAAAAAAAAAAAAYABAAAAAAAAAAAAAZABAAAAAAAAAAAAAEABQAAAAAAAAAAAAFABQAAAAAAAAAAAAGABQAAAAAAAAAAAAHABQAAAAAAAAAAAAIABQAAAAAAAAAAAAJABQAAAAAAAAAAAAKABQAAAAAAAAAAAALABQAAAAAAAAAAAAMABQAAAAAAAAAAAANABQAAAAAAAAAAAAOABQAAAAAAAAAAAAPABQAAAAAAAAAAAAQABQAAAAAAAAAAAARABQAAAAAAAAAAAASABQAAAAAAAAAAAATABQAAAAAAAAAAAAUABQAAAAAAAAAAAAVABQAAAAAAAAAAAAWABQAAAAAAAAAAAAXABQAAAAAAAAAAAAYABQAAAAAAAAAAAAZABQAAAAAAAAAAAAEAAcAAAAAAAAAAAAEAAgAAAAAAAAAAAAEAAkAAAAAAAAAAAAEAAoAAAAAAAAAAAA=")
-tile_set = SubResource("TileSet_wrm1d")
-script = ExtResource("2_wrm1d")
-
-[node name="Bat" parent="." instance=ExtResource("4_3dryh")]
-position = Vector2(165, 43)
-
-[node name="Bat2" parent="." instance=ExtResource("4_3dryh")]
-position = Vector2(173, 83)
-
-[node name="Bat3" parent="." instance=ExtResource("4_3dryh")]
-position = Vector2(64, 123)
-
-[node name="Bat4" parent="." instance=ExtResource("4_3dryh")]
-position = Vector2(169, 155)
+[node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("player")]
+script = ExtResource("4_3dryh")
+player = NodePath("../Player")

@@ -4,6 +4,7 @@ extends Camera2D
 @export var max_offset = Vector2(16,8)
 @export var roll = true
 @export var max_roll = 0.1
+@export var player = CharacterBody2D
 
 var trauma = 0.0
 var trauma_power = 2
@@ -14,6 +15,8 @@ func _ready() -> void:
 	randomize()
 	
 func _process(delta: float) -> void:
+	
+	position.y = player.position.y
 	if trauma > 0:
 		trauma = max(trauma - decay_rate * delta, 0)
 		_apply_shake()
