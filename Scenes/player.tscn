@@ -194,6 +194,7 @@ size = Vector2(9, 3)
 [node name="Player" type="CharacterBody2D"]
 collision_mask = 17
 script = ExtResource("2_cvnsp")
+trail_texture = ExtResource("1_v0iea")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_v0iea")

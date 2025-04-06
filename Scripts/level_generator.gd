@@ -18,9 +18,15 @@ const LOAD_AHEAD = 3
 const TILE_SIZE = 8
 const MAX_FALL_SPEED = 1500
 
+const ENEMY_SPAWN_CHANCE = 0.10
+const MIN_SPAWN_DEPTH = 200
+const SPAWN_PADDING = 32
+
+
 const MIN_X = WALL_LEFT + 1
 const MAX_X = WALL_RIGHT - PLATFORM_WIDTH - 1
 
+var MAX_ENEMIES_PER_CHUNK = 3
 var current_depth = 0
 var platform_x = 0
 var tilemap_layer : TileMapLayer
@@ -32,8 +38,10 @@ var last_platform_left = 0
 var current_wall_height = 0
 var cleanup_depth = 0
 var generation_queue = 0
+var current_chunk_enemies = 0
 
 @onready var player = $"../Player"
+@export var bat_scene : PackedScene
 
 var generated_chunks = []
 var current_chunk_y = 0
@@ -63,6 +71,7 @@ func generate_initial_chunks():
 	current_depth = start_depth + (5 * CHUNK_HEIGHT)
 
 func generate_new_chunk():	
+	current_chunk_enemies = 0
 	if generated_chunks.size() >= MAX_CHUNKS * 2:
 		return
 	
@@ -104,8 +113,13 @@ func create_platform_segment(start_x : int, length: int, world_y: int):
 		if x == 0 || x == length-1:
 			if randf() < 0.3:
 				tilemap_layer.set_cell(Vector2i(world_x, world_y), 0, Vector2i(1,0))
+				
+				
+		if length >= MIN_PLATFORM_LENGTH:
+			var spawn_x = start_x + randi_range(1, length-2)
+			try_spawn_enemy(spawn_x, world_y -1)
 
-func create_full_platform(world_Y):
+func create_full_platform(world_y):
 	var start = WALL_LEFT + 1
 	var end = WALL_RIGHT - 1
 	var has_gap = false
@@ -118,7 +132,11 @@ func create_full_platform(world_Y):
 			has_gap = false
 			
 		if randf() < 0.85: # special tiles
-			tilemap_layer.set_cell(Vector2i(x, world_Y), 0, Vector2i(0,0))
+			tilemap_layer.set_cell(Vector2i(x, world_y), 0, Vector2i(0,0))
+			
+		if (end - start) >= MIN_PLATFORM_LENGTH:
+			var spawn_x = start + (end - start) / 2
+			try_spawn_enemy(spawn_x, world_y -1)
 
 
 func cleanup_old_chunks():
@@ -155,6 +173,27 @@ func clear_chunk(chunk_base: int):
 		for x in range(WALL_LEFT + 1, WALL_RIGHT):
 			tilemap_layer.erase_cell(Vector2i(x,world_y))
 
+func try_spawn_enemy(world_x : int, world_y: int):
+	if current_chunk_enemies >= MAX_ENEMIES_PER_CHUNK:
+		return
+	
+	if world_y * TILE_SIZE < MIN_SPAWN_DEPTH:
+		return
+	if randf() > ENEMY_SPAWN_CHANCE:
+		return
+		
+	var spawn_pos = tilemap_layer.map_to_local(Vector2i(world_x, world_y))
+	
+	if spawn_pos.distance_to(player.global_position) < SPAWN_PADDING:
+		return
+	
+	var bat = bat_scene.instantiate()
+	bat.global_position = spawn_pos
+	add_child(bat)
+	
+	current_chunk_enemies += 1
+
 
 func _process(delta):
 	print("Active chunks: ", generated_chunks.size())
+	

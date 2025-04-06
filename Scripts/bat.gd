@@ -21,9 +21,14 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity = Vector2.ZERO
 		_turn_around()
-	
-	if can_turn and (is_on_wall() or _is_at_edge()):
+		
+	if global_position.x <= -9 * 8:
 		_turn_around()
+	if global_position.x >= 9 * 8:
+		_turn_around()
+	
+	#if can_turn and (is_on_wall() or _is_at_edge()):
+	#	_turn_around()
 func _is_at_edge() -> bool:
 	return !$RayCastLeft.is_colliding() or !$RayCastRight.is_colliding()
 	

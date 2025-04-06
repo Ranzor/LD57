@@ -7,10 +7,19 @@ extends CharacterBody2D
 @export var jump_force = -160.0
 @export var gravity = 400.0
 
-@export var knockback_force = 400
+@export var knockback_force = 500
 @export var knockback_decay = 0
 
 @export var LevelGenerator = Node2D
+
+
+@export var trail_interval = 0.1
+@export var trail_color = Color(1,1,1,0.5)
+@export var trail_texture : Texture2D
+
+
+var trail_timer = 0.0
+var trail_scene = preload("res://Scenes/ghost_trail.tscn")
 
 var knockback = Vector2.ZERO
 
@@ -39,6 +48,10 @@ func _ready() -> void:
 	$weapon_pivot/SwordHitBox/ColShape2D.disabled = true
 
 func _physics_process(delta: float) -> void:
+	trail_timer += delta
+	if trail_timer >= trail_interval:
+		spawn_trail()
+		trail_timer = 0.0
 	
 	current_depth = max(current_depth, abs(position.y))
 	
@@ -63,7 +76,7 @@ func _input(event: InputEvent) -> void:
 		is_attacking = true
 		is_invincible = true
 		animation.play("attack")
-		animation.speed_scale = 1
+		animation.speed_scale = 1.7
 		#fix hit box position
 
 	 
@@ -142,7 +155,7 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 func _on_sword_hit_box_body_entered(body: Node2D) -> void:
 	
 	if body.is_in_group("enemy"):
-		body.take_damage(1, global_position)
+		body.take_damage(2, global_position)
 	
 	# Get the sword's hitbox global rect (position + size)
 	var hitbox_rect = $weapon_pivot/SwordHitBox/ColShape2D.shape.get_rect()
@@ -173,15 +186,25 @@ func take_damage(enemy_global_pos: Vector2):
 		
 		var dir_to_player = (global_position - enemy_global_pos).normalized()
 		knockback = dir_to_player * knockback_force
-		$Camera2D.apply_shake(0.8)
+		$"../Camera2D".apply_shake(1.0)
 		
-		health -= 10
+		health -= 5
 		$Sprite2D.modulate = Color(2,2,2)
 		var tween = create_tween().set_trans(Tween.TRANS_SINE)
 		tween.tween_property($Sprite2D, "modulate", Color.WHITE, 0.15)
 		
-		if health <= 10:
+		if health <= 0:
 			die()
 
+func spawn_trail():
+	var trail = trail_scene.instantiate()
+	trail.texture = $Sprite2D.texture
+	trail.frame = $Sprite2D.frame
+	trail.global_position = global_position
+	trail.modulate = trail_color
+	trail.flip_h = $Sprite2D.flip_h
+	get_parent().add_child(trail)
+
+
 func die():
-	queue_free()
+	$".".visible = false

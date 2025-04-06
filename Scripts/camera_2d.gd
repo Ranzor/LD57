@@ -1,13 +1,13 @@
 extends Camera2D
 
-@export var decay_rate = 3.0
-@export var max_offset = Vector2(16,8)
+@export var decay_rate = 1.5
+@export var max_offset = Vector2(32,16)
 @export var roll = true
-@export var max_roll = 0.1
+@export var max_roll = 0.5
 @export var player = CharacterBody2D
 
 var trauma = 0.0
-var trauma_power = 2
+var trauma_power = 2.5
 
 func _ready() -> void:
 	randomize()

@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://cdmp6arle0k4q"]
+[gd_scene load_steps=5 format=3 uid="uid://cdmp6arle0k4q"]
 
 [ext_resource type="Script" uid="uid://jumheiw7631" path="res://Scripts/level_generator.gd" id="1_wowpa"]
+[ext_resource type="PackedScene" uid="uid://jmgqh4c2hvbf" path="res://Scenes/bat.tscn" id="2_3dryh"]
 [ext_resource type="PackedScene" uid="uid://drc7f16f18fq4" path="res://Scenes/player.tscn" id="2_qxrlw"]
 [ext_resource type="Script" uid="uid://chq2qy7xjww5o" path="res://Scripts/camera_2d.gd" id="4_3dryh"]
 
@@ -8,6 +9,7 @@
 
 [node name="LevelGenerator" type="Node2D" parent="."]
 script = ExtResource("1_wowpa")
+bat_scene = ExtResource("2_3dryh")
 
 [node name="Player" parent="." node_paths=PackedStringArray("LevelGenerator") instance=ExtResource("2_qxrlw")]
 collision_mask = 2
