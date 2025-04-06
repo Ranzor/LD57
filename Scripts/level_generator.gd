@@ -18,6 +18,11 @@ const LOAD_AHEAD = 3
 const TILE_SIZE = 8
 const MAX_FALL_SPEED = 1500
 
+const DIRT_DEPTH = 500
+const CAVE_DEPTH = 1000
+const LAVA_DEPTH = 1500
+const HAZARD_CHANCE = 0.3
+
 const ENEMY_SPAWN_CHANCE = 0.10
 const MIN_SPAWN_DEPTH = 200
 const SPAWN_PADDING = 32
@@ -60,7 +65,6 @@ func _ready() -> void:
 	
 	current_depth = int(player.global_position.y / TILE_SIZE)
 	generate_initial_chunks()
-	print("Generating")
 
 func generate_initial_chunks():
 	
@@ -71,17 +75,17 @@ func generate_initial_chunks():
 	current_depth = start_depth + (5 * CHUNK_HEIGHT)
 
 func generate_new_chunk():	
+	print(current_depth)
 	current_chunk_enemies = 0
 	if generated_chunks.size() >= MAX_CHUNKS * 2:
 		return
 	
-	print("Generating chunk ", current_depth)
-	
 	for y in CHUNK_HEIGHT:
+		var biome_y = get_biome_y_offset(current_depth)
 		var world_y = current_depth + y
 		if tilemap_layer.get_cell_source_id(Vector2i(WALL_LEFT, world_y)) == -1:
-			tilemap_layer.set_cell(Vector2i(WALL_LEFT, world_y), 0, WALL_TILE)
-			tilemap_layer.set_cell(Vector2i(WALL_RIGHT, world_y), 0, WALL_TILE)
+			tilemap_layer.set_cell(Vector2i(WALL_LEFT, world_y), 0, Vector2i(2, biome_y))
+			tilemap_layer.set_cell(Vector2i(WALL_RIGHT, world_y), 0, Vector2i(2, biome_y))
 	
 		if (world_y - current_depth) % PLATFORM_SPACING == 0:
 			generate_platform(world_y)
@@ -103,16 +107,20 @@ func generate_platform(world_y : int):
 			create_full_platform(world_y)
 	
 func create_platform_segment(start_x : int, length: int, world_y: int):
+	var biome_y = get_biome_y_offset(current_depth)
+	
 	for x in length:
 		var world_x = start_x + x
 		if world_x >= WALL_RIGHT: break
 		
 		if randf() > GAP_CHANCE:
-			tilemap_layer.set_cell(Vector2i(world_x, world_y), 0, Vector2i(0,0))
+			tilemap_layer.set_cell(Vector2i(world_x, world_y), 0, Vector2i(0,biome_y))
+		elif randf() < HAZARD_CHANCE:
+			tilemap_layer.set_cell(Vector2i(world_x, world_y), 0, Vector2i(3, biome_y))
 			
 		if x == 0 || x == length-1:
 			if randf() < 0.3:
-				tilemap_layer.set_cell(Vector2i(world_x, world_y), 0, Vector2i(1,0))
+				tilemap_layer.set_cell(Vector2i(world_x, world_y), 0, Vector2i(1,biome_y))
 				
 				
 		if length >= MIN_PLATFORM_LENGTH:
@@ -120,6 +128,7 @@ func create_platform_segment(start_x : int, length: int, world_y: int):
 			try_spawn_enemy(spawn_x, world_y -1)
 
 func create_full_platform(world_y):
+	var biome_y = get_biome_y_offset(current_depth)
 	var start = WALL_LEFT + 1
 	var end = WALL_RIGHT - 1
 	var has_gap = false
@@ -132,7 +141,7 @@ func create_full_platform(world_y):
 			has_gap = false
 			
 		if randf() < 0.85: # special tiles
-			tilemap_layer.set_cell(Vector2i(x, world_y), 0, Vector2i(0,0))
+			tilemap_layer.set_cell(Vector2i(x, world_y), 0, Vector2i(0,biome_y))
 			
 		if (end - start) >= MIN_PLATFORM_LENGTH:
 			var spawn_x = start + (end - start) / 2
@@ -166,8 +175,6 @@ func _physics_process(delta: float) -> void:
 	
 
 func clear_chunk(chunk_base: int):
-	print("Clearing chunk ", chunk_base)
-	
 	for y in CHUNK_HEIGHT:
 		var world_y = chunk_base + y
 		for x in range(WALL_LEFT + 1, WALL_RIGHT):
@@ -192,8 +199,11 @@ func try_spawn_enemy(world_x : int, world_y: int):
 	add_child(bat)
 	
 	current_chunk_enemies += 1
-
-
-func _process(delta):
-	print("Active chunks: ", generated_chunks.size())
 	
+func get_biome_y_offset(current_depth : float) -> int:
+	if current_depth < DIRT_DEPTH:
+		return 0
+	elif current_depth < CAVE_DEPTH:
+		return 1
+	else:
+		return 2

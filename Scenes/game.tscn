@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://cdmp6arle0k4q"]
+[gd_scene load_steps=6 format=3 uid="uid://cdmp6arle0k4q"]
 
 [ext_resource type="Script" uid="uid://jumheiw7631" path="res://Scripts/level_generator.gd" id="1_wowpa"]
 [ext_resource type="PackedScene" uid="uid://jmgqh4c2hvbf" path="res://Scenes/bat.tscn" id="2_3dryh"]
 [ext_resource type="PackedScene" uid="uid://drc7f16f18fq4" path="res://Scenes/player.tscn" id="2_qxrlw"]
 [ext_resource type="Script" uid="uid://chq2qy7xjww5o" path="res://Scripts/camera_2d.gd" id="4_3dryh"]
+[ext_resource type="TileSet" uid="uid://bbvjul663eycw" path="res://dirttiles.tres" id="5_wowpa"]
 
 [node name="Game" type="Node2D"]
 
@@ -18,3 +19,6 @@ LevelGenerator = NodePath("../LevelGenerator")
 [node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("player")]
 script = ExtResource("4_3dryh")
 player = NodePath("../Player")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("5_wowpa")
