@@ -1,12 +1,12 @@
-[gd_scene load_steps=10 format=3 uid="uid://jmgqh4c2hvbf"]
+[gd_scene load_steps=11 format=3 uid="uid://dl32qoh5fjap3"]
 
-[ext_resource type="Texture2D" uid="uid://dq511ufqytujj" path="res://Sprites/bat.png" id="1_j7be8"]
-[ext_resource type="Script" uid="uid://bl36pthua8at0" path="res://Scripts/bat.gd" id="1_jckqh"]
-[ext_resource type="PackedScene" uid="uid://c7ahiji6itgu0" path="res://Scenes/coin.tscn" id="2_wt6c1"]
-[ext_resource type="PackedScene" uid="uid://r8do4o1kkuo3" path="res://Scenes/health_pickup.tscn" id="3_50dnf"]
+[ext_resource type="Script" uid="uid://duqhfriirjpv0" path="res://Scripts/worm.gd" id="1_l5dqu"]
+[ext_resource type="Texture2D" uid="uid://c52gkkus3eqvn" path="res://Sprites/worm.png" id="2_n80vc"]
+[ext_resource type="PackedScene" uid="uid://c7ahiji6itgu0" path="res://Scenes/coin.tscn" id="2_x1856"]
+[ext_resource type="PackedScene" uid="uid://r8do4o1kkuo3" path="res://Scenes/health_pickup.tscn" id="3_x1856"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_jckqh"]
-radius = 7.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l5dqu"]
+size = Vector2(7, 3)
 
 [sub_resource type="Animation" id="Animation_j7be8"]
 length = 0.001
@@ -41,28 +41,49 @@ tracks/0/keys = {
 "values": [0, 1]
 }
 
+[sub_resource type="Animation" id="Animation_l5dqu"]
+resource_name = "crawl"
+length = 0.3
+step = 0.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [0, 1]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_wt6c1"]
 _data = {
 &"RESET": SubResource("Animation_j7be8"),
+&"crawl": SubResource("Animation_l5dqu"),
 &"fly": SubResource("Animation_jckqh")
 }
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_wt6c1"]
-radius = 8.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_n80vc"]
+size = Vector2(7, 3)
 
-[node name="Bat" type="CharacterBody2D" groups=["enemy"]]
+[node name="Worm" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 8
-collision_mask = 4
-script = ExtResource("1_jckqh")
-coin_scene = ExtResource("2_wt6c1")
-health_pickup_scene = ExtResource("3_50dnf")
+collision_mask = 6
+script = ExtResource("1_l5dqu")
+speed = 20.0
+coin_scene = ExtResource("2_x1856")
+health_pickup_scene = ExtResource("3_x1856")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_j7be8")
+position = Vector2(0, 4)
+texture = ExtResource("2_n80vc")
 hframes = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_jckqh")
+position = Vector2(0.5, 6.5)
+shape = SubResource("RectangleShape2D_l5dqu")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -71,18 +92,19 @@ libraries = {
 autoplay = "fly"
 
 [node name="RayCastLeft" type="RayCast2D" parent="."]
-position = Vector2(-4, 3)
+position = Vector2(-4, 7)
 target_position = Vector2(0, 8)
 
 [node name="RayCastRight" type="RayCast2D" parent="."]
-position = Vector2(4, 3)
+position = Vector2(5, 7)
 target_position = Vector2(0, 8)
 
 [node name="PlayerDetection" type="Area2D" parent="."]
+position = Vector2(0.5, 6.5)
 collision_layer = 16
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetection"]
-shape = SubResource("CircleShape2D_wt6c1")
+shape = SubResource("RectangleShape2D_n80vc")
 debug_color = Color(0.87645, 0, 0.0634567, 0.42)
 
 [connection signal="body_entered" from="PlayerDetection" to="." method="_on_player_detection_body_entered"]

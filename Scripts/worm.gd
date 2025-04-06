@@ -1,12 +1,12 @@
 extends CharacterBody2D
 
-@export var health = 4
+@export var health = 2
 @export var speed = 40.0
 @export var coin_scene : PackedScene
 @export var health_pickup_scene : PackedScene
-@export var health_drop_chance = 0.15
 @export var coin_count = 8
-var coins_spawned = 0
+@export var health_drop_chance = 0.1
+var gravity = 980
 
 var direction = -1
 var can_turn = true
@@ -19,23 +19,21 @@ func _ready() -> void:
 	animation.speed_scale = 0.3
 	
 func _physics_process(delta: float) -> void:
-	global_position.y = ypos
+	
+	if not is_on_floor():
+		velocity.y += gravity * delta
+	else:
+		velocity.y = 0
+	
 	if !is_staggered:
 		velocity.x = direction * speed
 		move_and_slide()
 	else:
 		velocity = Vector2.ZERO
 		_turn_around()
-		
-	if global_position.x <= -8 * 8:
-		global_position.x = -8*8
-		_turn_around()
-	if global_position.x >= 8 * 8:
-		global_position.x = 8*8
-		_turn_around()
 	
-	#if can_turn and (is_on_wall() or _is_at_edge()):
-	#	_turn_around()
+	if can_turn and (is_on_wall() or _is_at_edge()):
+		_turn_around()
 func _is_at_edge() -> bool:
 	return !$RayCastLeft.is_colliding() or !$RayCastRight.is_colliding()
 	
@@ -66,22 +64,21 @@ func die():
 	if randf() < health_drop_chance:
 		spawn_health()
 	queue_free()
-
+	
 func spawn_coins():
-	for i in coin_count:
-		if coins_spawned <= coin_count:
-			var coin = coin_scene.instantiate()
-			coin.position = global_position
-			get_parent().add_child(coin)
-			
-			coin.linear_velocity = Vector2(
-				randf_range(-100,100),
-				randf_range(-200,-50)
-			)
-			
-			coin.angular_velocity = 0
-			coin.rotation = 0
-			
+	for i in coin_count:	
+		var coin = coin_scene.instantiate()
+		coin.position = global_position
+		get_parent().add_child(coin)
+		
+		coin.linear_velocity = Vector2(
+			randf_range(-100,100),
+			randf_range(-200,-50)
+		)
+		
+		coin.angular_velocity = 0
+		coin.rotation = 0
+
 func spawn_health():
 		var health = health_pickup_scene.instantiate()
 		health.position = global_position

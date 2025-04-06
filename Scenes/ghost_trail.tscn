@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dbifivjhk0502" path="res://Scripts/ghost_trail.gd" id="1_gbhgw"]
 
 [node name="GhostTrail" type="Sprite2D"]
+z_index = -1
 hframes = 17
 script = ExtResource("1_gbhgw")
 

@@ -1,5 +1,8 @@
 extends CharacterBody2D
 
+@export var normal : Texture
+@export var power : Texture
+
 @export var health = 100
 @export var speed = 80.0
 @export var acceleration = 800.0
@@ -16,6 +19,24 @@ extends CharacterBody2D
 @export var trail_interval = 0.1
 @export var trail_color = Color(1,1,1,0.5)
 @export var trail_texture : Texture2D
+@export var damage_cooldown = 1.0
+
+var power_boost_active = false
+var power_boost_timer : Timer
+
+var current_damage = 2
+var base_damage = 2
+
+var coins = 0
+var fireball_unlocked = false
+var fireball_count = 0
+
+var last_damage_time = 0.0
+var hazard_tiles = [
+	Vector2i(3,0),	# Dirt Spikes
+	Vector2i(3,1),	# Cave Spikes
+	Vector2i(3,2)	# Lava Spikes
+]
 
 
 var trail_timer = 0.0
@@ -46,8 +67,14 @@ var is_invincible = false
 func _ready() -> void:
 	animation.speed_scale = 0.1
 	$weapon_pivot/SwordHitBox/ColShape2D.disabled = true
+	
+	power_boost_timer = Timer.new()
+	power_boost_timer.one_shot = true
+	power_boost_timer.timeout.connect(_end_power_boost)
+	add_child(power_boost_timer)
 
 func _physics_process(delta: float) -> void:
+	
 	trail_timer += delta
 	if trail_timer >= trail_interval:
 		spawn_trail()
@@ -78,6 +105,13 @@ func _input(event: InputEvent) -> void:
 		animation.play("attack")
 		animation.speed_scale = 1.7
 		#fix hit box position
+	
+	if event.is_action_pressed("fire"):
+		if fireball_unlocked && fireball_count >= 1:
+			throw_fireball()
+			fireball_count -= 1
+			if fireball_count <= 0:
+				fireball_unlocked = false
 
 	 
 	
@@ -156,27 +190,10 @@ func _on_sword_hit_box_body_entered(body: Node2D) -> void:
 	
 	if body.is_in_group("enemy"):
 		body.take_damage(2, global_position)
-	
-	# Get the sword's hitbox global rect (position + size)
-	var hitbox_rect = $weapon_pivot/SwordHitBox/ColShape2D.shape.get_rect()
-	hitbox_rect.position = $weapon_pivot/SwordHitBox.global_position
-
-	# Convert rect to TileMapLayer's coordinate system
-	var start_pos = tilemap.local_to_map(tilemap.to_local(hitbox_rect.position))
-	var end_pos = tilemap.local_to_map(tilemap.to_local(hitbox_rect.end))
-
-	# Iterate over all tiles in the hitbox area
-	for x in range(start_pos.x, end_pos.x + 1):
-		for y in range(start_pos.y, end_pos.y + 1):
-			var tile_coords := Vector2i(x, y)
-			
-			if tilemap.get_cell_source_id(tile_coords) == -1:
-				continue
-			if tiles_hit_this_attack.has(tile_coords):
-				continue
-			
-			tiles_hit_this_attack[tile_coords] = true
-			tilemap.damage_tile(tile_coords)
+		$"../Camera2D".apply_shake(.3)
+	elif body.is_in_group("platform"):
+		body.take_damage(1)
+		$"../Camera2D".apply_shake(.2)
 			
 func take_damage(enemy_global_pos: Vector2):
 	if !is_invincible:
@@ -205,6 +222,42 @@ func spawn_trail():
 	trail.flip_h = $Sprite2D.flip_h
 	get_parent().add_child(trail)
 
+func collect_coin() -> void:
+	if not power_boost_active:
+		activate_power_boost(2,4)
+	coins += 1
+	print("Coins: ", coins)
+	if coins >= 10 and !fireball_unlocked:
+		fireball_unlocked = true
+		fireball_count = 3
+		
+func collect_health() -> void:
+	health += 20
+		
+func throw_fireball():
+	var fireball = preload("res://Scenes/fireball.tscn").instantiate()
+	fireball.global_position = global_position
+	fireball.direction = 1 if !$Sprite2D.flip_h else -1
+	get_parent().add_child(fireball)
+	$"../Camera2D".apply_shake(.5)
+		
+
+func activate_power_boost(multiplier: float, duration : float):
+	current_damage = base_damage * multiplier
+	power_boost_active = true
+	$Sprite2D.texture = power
+	
+	if power_boost_timer.time_left > 0:
+		power_boost_timer.stop()
+	
+	power_boost_timer.start(duration)
+		
+		
+func _end_power_boost():
+	current_damage = base_damage
+	power_boost_active = false
+	$Sprite2D.texture = normal
+
 
 func die():
-	$".".visible = false
+	get_tree().quit()

@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://r8do4o1kkuo3"]
+
+[ext_resource type="Texture2D" uid="uid://bx5kp2hdgj67" path="res://Sprites/potion.png" id="1_gvws8"]
+[ext_resource type="PhysicsMaterial" uid="uid://bmrcwa6hn5p8m" path="res://physicsmat.tres" id="1_lj2jr"]
+[ext_resource type="Script" uid="uid://dnde8laae2xbx" path="res://Scripts/health_pickup.gd" id="2_18ac6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lj2jr"]
+size = Vector2(6, 6)
+
+[node name="HealthPickup" type="RigidBody2D"]
+physics_material_override = ExtResource("1_lj2jr")
+script = ExtResource("2_18ac6")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_gvws8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_lj2jr")
+
+[node name="Pickup" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Pickup"]
+shape = SubResource("RectangleShape2D_lj2jr")
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="SpawnTimer" type="Timer" parent="."]
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="timeout" from="SpawnTimer" to="." method="_on_spawn_timer_timeout"]

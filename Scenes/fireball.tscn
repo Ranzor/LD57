@@ -1,0 +1,44 @@
+[gd_scene load_steps=5 format=3 uid="uid://wjtu63f7bga7"]
+
+[ext_resource type="Script" uid="uid://bxkhwuierpwkg" path="res://Scripts/fireball.gd" id="1_0mxqg"]
+[ext_resource type="PackedScene" uid="uid://b54i3okjfpg1p" path="res://Scenes/shrapnel.tscn" id="2_hcgvv"]
+[ext_resource type="Texture2D" uid="uid://c56d6u4vi3588" path="res://Sprites/fireball.png" id="2_ne4qj"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hcgvv"]
+radius = 3.0
+
+[node name="Fireball" type="Area2D"]
+collision_layer = 128
+collision_mask = 11
+script = ExtResource("1_0mxqg")
+shrapnel_scene = ExtResource("2_hcgvv")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_ne4qj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_hcgvv")
+
+[node name="ExplosionParticles" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 50
+lifetime = 0.1
+one_shot = true
+direction = Vector2(0, 0)
+spread = 180.0
+initial_velocity_min = 200.0
+initial_velocity_max = 200.0
+color = Color(0.674632, 0.195895, 0.195895, 1)
+
+[node name="TrailParticles" type="CPUParticles2D" parent="."]
+direction = Vector2(0, 1)
+gravity = Vector2(0, 100)
+initial_velocity_min = 50.0
+initial_velocity_max = 50.0
+color = Color(1, 1, 0, 1)
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 2.0
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
