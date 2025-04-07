@@ -23,6 +23,7 @@ func _ready() -> void:
 	base_offset = offset
 
 func _process(delta: float) -> void:
+	if position.y < -100: position.y = -100
 	if !player:
 		return
 	

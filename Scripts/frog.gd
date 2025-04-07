@@ -5,7 +5,8 @@ extends CharacterBody2D
 @export var coin_scene : PackedScene
 @export var health_pickup_scene : PackedScene
 @export var health_drop_chance = 0.2
-@export var coin_count = 8
+@export var coin_count = 30
+@export var damage = 25
 
 var gravity = 980
 var direction = -1
@@ -13,7 +14,6 @@ var can_turn = true
 var is_staggered = false
 
 @onready var animation = $AnimationPlayer
-@onready var ypos = global_position.y
 
 func _ready() -> void:
 	randomize()
@@ -22,15 +22,22 @@ func _ready() -> void:
 	
 	
 func _physics_process(delta: float) -> void:
+	
+	if $Sprite2D.flip_h:
+		$HurtBox.position.x = -7.5
+		$CollisionShape2D.position.x = 8
+	else:
+		$HurtBox.position.x = 0.5
+		$CollisionShape2D.position.x = -8
 
-		velocity.y += gravity * delta
-		velocity.x = 0
-		move_and_slide()
+	velocity.y += gravity * delta
+	velocity.x = 0
+	move_and_slide()
 
-		if !is_on_floor():
-			velocity.y = clamp(velocity.y, -INF, 500)
-		else:
-			velocity.y = 0
+	if !is_on_floor():
+		velocity.y = clamp(velocity.y, -INF, 500)
+	else:
+		velocity.y = 0
 	
 	
 func take_damage(amount : int, source_position: Vector2):
@@ -59,6 +66,7 @@ func die():
 	spawn_coins()
 	if randf() < health_drop_chance:
 		spawn_health()
+	Global.score += 50
 	queue_free()
 	
 func spawn_coins():
@@ -95,4 +103,4 @@ func _turn_around():
 
 func _on_player_detection_body_entered(body: Node2D) -> void:
 	if body.name == "Player":
-		body.take_damage(global_position)
+		body.take_damage(damage, global_position)

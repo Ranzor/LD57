@@ -5,9 +5,6 @@
 [ext_resource type="Texture2D" uid="uid://c63u7s3xqtvlb" path="res://Sprites/frog.png" id="2_evecu"]
 [ext_resource type="PackedScene" uid="uid://r8do4o1kkuo3" path="res://Scenes/health_pickup.tscn" id="3_sqyq2"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_b2kjn"]
-size = Vector2(14, 12)
-
 [sub_resource type="Animation" id="Animation_b2kjn"]
 resource_name = "Lick"
 length = 0.4
@@ -111,6 +108,9 @@ _data = {
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n80vc"]
 size = Vector2(22, 3)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_b2kjn"]
+size = Vector2(14, 12)
+
 [node name="Frog" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 8
 collision_mask = 6
@@ -123,9 +123,7 @@ coin_count = 12
 texture = ExtResource("2_evecu")
 hframes = 3
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-8, 1)
-shape = SubResource("RectangleShape2D_b2kjn")
+[node name="Node2D2" type="Node2D" parent="."]
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -142,5 +140,9 @@ position = Vector2(3.5, 1)
 shape = SubResource("RectangleShape2D_n80vc")
 disabled = true
 debug_color = Color(0.87645, 0, 0.0634567, 0.42)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-8, 1)
+shape = SubResource("RectangleShape2D_b2kjn")
 
 [connection signal="body_entered" from="HurtBox" to="." method="_on_player_detection_body_entered"]

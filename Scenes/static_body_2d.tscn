@@ -1,0 +1,56 @@
+[gd_scene load_steps=9 format=3 uid="uid://ch4yvvdtxr8yo"]
+
+[ext_resource type="Texture2D" uid="uid://b7whefyf1bq2o" path="res://Sprites/Shop.png" id="1_78j07"]
+[ext_resource type="Script" uid="uid://dkhxjs4g6ugke" path="res://Scripts/static_body_2d.gd" id="1_d3w87"]
+[ext_resource type="Texture2D" uid="uid://bx5kp2hdgj67" path="res://Sprites/potion.png" id="3_2jaqw"]
+[ext_resource type="Texture2D" uid="uid://c56d6u4vi3588" path="res://Sprites/fireball.png" id="3_4fk0b"]
+[ext_resource type="Texture2D" uid="uid://dpxs8nhvdu5m3" path="res://Sprites/power_icon.png" id="4_4fk0b"]
+[ext_resource type="Texture2D" uid="uid://phrvfa1uecr5" path="res://Sprites/44numbers.png" id="4_brl1s"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_d3w87"]
+size = Vector2(16, 14)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ytudu"]
+size = Vector2(16, 4)
+
+[node name="Shop" type="StaticBody2D" node_paths=PackedStringArray("icon", "tens_place", "ones_place")]
+collision_layer = 3
+script = ExtResource("1_d3w87")
+icon = NodePath("Sprite2D/Type")
+tens_place = NodePath("Sprite2D/CostTens")
+ones_place = NodePath("Sprite2D/CostOnes")
+health_icon = ExtResource("3_2jaqw")
+fireball_icon = ExtResource("3_4fk0b")
+power_icon = ExtResource("4_4fk0b")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -4)
+texture = ExtResource("1_78j07")
+
+[node name="Type" type="Sprite2D" parent="Sprite2D"]
+position = Vector2(-4, -3)
+texture = ExtResource("3_2jaqw")
+
+[node name="CostTens" type="Sprite2D" parent="Sprite2D"]
+position = Vector2(0, -3)
+texture = ExtResource("4_brl1s")
+hframes = 10
+
+[node name="CostOnes" type="Sprite2D" parent="Sprite2D"]
+position = Vector2(5, -3)
+texture = ExtResource("4_brl1s")
+hframes = 10
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(0, -4)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0, -3)
+shape = SubResource("RectangleShape2D_d3w87")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+shape = SubResource("RectangleShape2D_ytudu")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]

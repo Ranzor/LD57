@@ -17,12 +17,14 @@ const PLATFORM_SPACING = 3
 const LOAD_AHEAD = 3
 const TILE_SIZE = 8
 const MAX_FALL_SPEED = 1500
+const MAX_SHOP_INTERVAL = 8
 
-const DIRT_DEPTH = 500
-const CAVE_DEPTH = 1000
-const LAVA_DEPTH = 1500
+@onready var DIRT_DEPTH = Global.max_depth / 4
+@onready var CAVE_DEPTH = Global.max_depth / 2
+@onready var LAVA_DEPTH = Global.max_depth
 const HAZARD_CHANCE = 0.3
 
+var last_shop_chunk = -MAX_SHOP_INTERVAL
 
 
 const MIN_SPAWN_DEPTH = 200
@@ -64,6 +66,12 @@ var current_chunk_enemies = 0
 @export var medium_weight_curve : Curve
 @export var hard_weight_curve : Curve
 
+
+@export var max_darkness = 0.8
+@onready var depth_for_max_darkness = Global.max_depth * 2
+
+@onready var canvas_modulate = $"../CanvasModulate"
+
 var generated_chunks = []
 var current_chunk_y = 0
 
@@ -91,10 +99,11 @@ func generate_initial_chunks():
 	current_depth = start_depth + (5 * CHUNK_HEIGHT)
 
 func generate_new_chunk():	
-	print(current_depth)
 	current_chunk_enemies = 0
+	current_chunk_y = current_depth / CHUNK_HEIGHT
 	if generated_chunks.size() >= MAX_CHUNKS * 2:
 		return
+		
 	
 	for y in CHUNK_HEIGHT:
 		var biome_y = get_biome_y_offset(current_depth)
@@ -113,6 +122,7 @@ func generate_new_chunk():
 func generate_platform(world_y : int):
 	var platform_type = randi() % 3
 	
+	
 	match platform_type:
 		0:
 			var length = randi_range(MIN_PLATFORM_LENGTH, MAX_PLATFORM_LENGTH)
@@ -126,10 +136,19 @@ func generate_platform(world_y : int):
 func create_platform_segment(start_x : int, length: int, world_y: int):
 	var biome_y = get_biome_y_offset(current_depth)
 	var platform_count = 0
+	var shop_spawned = false
+	
+	var should_shop = should_spawn_shop(world_y) && length >= 4
 	
 	for x in length:
 		var world_x = start_x + x
-		if world_x >= WALL_RIGHT: break
+		if world_x >= WALL_RIGHT -1: break
+		
+		if should_shop && x == length/2 - 1:
+			spawn_shop(world_x, world_y)
+			shop_spawned = true
+			x += 1
+			continue
 		
 		if randf() < GAP_CHANCE:			
 			if randf() < HAZARD_CHANCE && current_depth > MIN_SPAWN_DEPTH:
@@ -271,3 +290,36 @@ func update_difficulty():
 	var factor = log(current_depth / 500.0 + 1)
 	ENEMY_SPAWN_CHANCE = clamp(BASE_SPAWN_CHANCE + factor * 0.05, 0.10, 0.5)
 	MAX_ENEMIES_PER_CHUNK = clamp(BASE_MAX_ENEMIES + factor * 2.0, 3.0, 10.0)
+	
+func should_spawn_shop(world_y : int) -> bool:
+	var chunks_since_last = current_chunk_y - last_shop_chunk
+	var mercy_force = chunks_since_last >= MAX_SHOP_INTERVAL
+	var depth_ok = world_y > MIN_SPAWN_DEPTH
+	
+	return (mercy_force or randf() < 0.15) and depth_ok
+	
+
+func spawn_shop(world_x:int, world_y : int):
+	var shop = preload("res://Scenes/static_body_2d.tscn").instantiate()
+	
+	var shop_pos = tilemap_layer.map_to_local(Vector2i(world_x, world_y))
+	shop.global_position = shop_pos
+	
+	var upgrade_types = Global.SHOP_DATA.keys()
+	var type = upgrade_types[randi() % upgrade_types.size()]
+	
+	var price_range = Global.SHOP_DATA[type]
+	var price = randf_range(price_range["min_price"], price_range["max_price"])
+	shop.setup(type, price)
+	
+	add_child(shop)
+	last_shop_chunk = current_chunk_y
+
+func _process(delta: float) -> void:
+	var player_depth = player.global_position.y
+	var darkness_factor = clamp(player_depth / depth_for_max_darkness, 0.0,1.0)
+	canvas_modulate.color = Color(1.0 - darkness_factor * max_darkness,1.0 - darkness_factor * max_darkness,1.0 - darkness_factor * max_darkness)
+	
+	
+	if player.has_method("update_light_for_darkness"):
+		player.update_light_for_darkness(darkness_factor)

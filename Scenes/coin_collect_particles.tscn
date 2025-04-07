@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://bj4sepsunr4ew"]
+
+[sub_resource type="Curve" id="Curve_mxp32"]
+_data = [Vector2(0, 0), 0.0, 1.4, 0, 0, Vector2(0.579545, 0.460674), 0.0, 0.0, 0, 0, Vector2(0.988636, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[node name="CoinCollectParticles" type="CPUParticles2D"]
+emitting = false
+amount = 3
+lifetime = 0.3
+one_shot = true
+explosiveness = 1.0
+emission_shape = 1
+emission_sphere_radius = 1.0
+direction = Vector2(0, -1)
+gravity = Vector2(0, 98)
+initial_velocity_min = 50.0
+initial_velocity_max = 50.0
+scale_amount_curve = SubResource("Curve_mxp32")
+color = Color(0.984314, 0.94902, 0.211765, 1)

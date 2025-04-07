@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3 uid="uid://c0jdmjywmfd8s"]
+
+[ext_resource type="AudioStream" uid="uid://c3poh0u3itarr" path="res://Sound/destroytile.wav" id="1_588qd"]
+
+[sub_resource type="Curve" id="Curve_3qail"]
+_data = [Vector2(0, 1), 0.0, -1.1, 0, 1, Vector2(0.909091, 0), 0.0, 0.0, 0, 0, Vector2(0.977273, 0), 0.0, 0.0, 1, 0]
+point_count = 3
+
+[node name="PlatformDestroyParticles" type="CPUParticles2D"]
+emitting = false
+amount = 5
+lifetime = 0.2
+one_shot = true
+explosiveness = 1.0
+emission_shape = 4
+emission_points = PackedVector2Array()
+emission_colors = PackedColorArray()
+direction = Vector2(0, 0)
+spread = 180.0
+initial_velocity_min = 80.0
+initial_velocity_max = 80.0
+angular_velocity_min = 90.0
+angular_velocity_max = 90.0
+scale_amount_curve = SubResource("Curve_3qail")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("1_588qd")
+volume_db = -10.0
+autoplay = true

@@ -1,0 +1,116 @@
+[gd_scene load_steps=12 format=3 uid="uid://dkg38sjdho4ae"]
+
+[ext_resource type="Script" uid="uid://j7gju7go2ajv" path="res://Scripts/start_menu.gd" id="1_juhg0"]
+[ext_resource type="FontFile" uid="uid://bdnjh7bt8ntfx" path="res://Minecraft.ttf" id="2_jgtwh"]
+[ext_resource type="Script" uid="uid://dtd8lpi5acmfb" path="res://Scripts/menu_ligt_flicker.gd" id="2_m6uer"]
+[ext_resource type="PackedScene" uid="uid://dtxqxvc1y6jo0" path="res://Scenes/dustparticles.tscn" id="3_a43kq"]
+
+[sub_resource type="Gradient" id="Gradient_jgtwh"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_m6uer"]
+gradient = SubResource("Gradient_jgtwh")
+fill_from = Vector2(0.53211, 1)
+fill_to = Vector2(0.518349, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_juhg0"]
+bg_color = Color(0.101961, 0.372549, 0.705882, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jgtwh"]
+bg_color = Color(0.2, 0.2, 0.2, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_626he"]
+bg_color = Color(0.837542, 0.507038, 0.274003, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m6uer"]
+bg_color = Color(0.101961, 0.372549, 0.705882, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a43kq"]
+bg_color = Color(0.2, 0.2, 0.2, 1)
+
+[node name="StartMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_juhg0")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.097569, 0.0374243, 0.0278961, 1)
+
+[node name="PointLight2D" type="PointLight2D" parent="ColorRect"]
+position = Vector2(311.5, 181)
+scale = Vector2(12.4531, 5.96875)
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_m6uer")
+script = ExtResource("2_m6uer")
+
+[node name="Dust" parent="ColorRect" instance=ExtResource("3_a43kq")]
+position = Vector2(320, 180)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -131.5
+offset_right = 150.0
+offset_bottom = 131.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+focus_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer"]
+light_mask = 2
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_jgtwh")
+text = "Abyssal Mayhem"
+horizontal_alignment = 1
+
+[node name="ScoreLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("2_jgtwh")
+text = "Score: 000000000"
+
+[node name="StartButton" type="Button" parent="MarginContainer/VBoxContainer"]
+light_mask = 2
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+focus_next = NodePath("../QuitButton")
+focus_previous = NodePath("../QuitButton")
+theme_override_fonts/font = ExtResource("2_jgtwh")
+theme_override_styles/hover = SubResource("StyleBoxFlat_juhg0")
+theme_override_styles/normal = SubResource("StyleBoxFlat_jgtwh")
+text = "Descend"
+
+[node name="QuitButton" type="Button" parent="MarginContainer/VBoxContainer"]
+light_mask = 2
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+focus_next = NodePath("../StartButton")
+focus_previous = NodePath("../StartButton")
+theme_override_fonts/font = ExtResource("2_jgtwh")
+theme_override_styles/focus = SubResource("StyleBoxFlat_626he")
+theme_override_styles/hover = SubResource("StyleBoxFlat_m6uer")
+theme_override_styles/normal = SubResource("StyleBoxFlat_a43kq")
+text = "Escape"

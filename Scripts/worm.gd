@@ -4,8 +4,9 @@ extends CharacterBody2D
 @export var speed = 40.0
 @export var coin_scene : PackedScene
 @export var health_pickup_scene : PackedScene
-@export var coin_count = 8
+@export var coin_count = 10
 @export var health_drop_chance = 0.1
+@export var damage = 5
 var gravity = 980
 
 var direction = -1
@@ -63,6 +64,7 @@ func die():
 	spawn_coins()
 	if randf() < health_drop_chance:
 		spawn_health()
+	Global.score += 5
 	queue_free()
 	
 func spawn_coins():
@@ -99,4 +101,4 @@ func _turn_around():
 
 func _on_player_detection_body_entered(body: Node2D) -> void:
 	if body.name == "Player":
-		body.take_damage(global_position)
+		body.take_damage(damage, global_position)

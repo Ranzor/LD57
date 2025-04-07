@@ -15,6 +15,7 @@ var has_exploded := false
 @onready var collision = $CollisionShape2D
 @onready var particles = $TrailParticles
 @onready var explosion_particles = $ExplosionParticles
+@export var explosion_sound = AudioStreamWAV
 
 func _ready():
 	velocity = Vector2(throw_speed * direction, upward_force)
@@ -56,9 +57,15 @@ func explode():
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("platform"):
 		body.take_damage(2)
+		get_tree().get_first_node_in_group("player").audioPlayer.stream = explosion_sound
+		get_tree().get_first_node_in_group("player").audioPlayer.play()
 		explode()
 	elif body.is_in_group("enemy"):
 		body.take_damage(4, global_position)
+		get_tree().get_first_node_in_group("player").audioPlayer.stream = explosion_sound
+		get_tree().get_first_node_in_group("player").audioPlayer.play()
 		explode()
 	elif body.name != "Player":
+		get_tree().get_first_node_in_group("player").audioPlayer.stream = explosion_sound
+		get_tree().get_first_node_in_group("player").audioPlayer.play()
 		explode()

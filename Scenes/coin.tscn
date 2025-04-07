@@ -1,8 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://c7ahiji6itgu0"]
+[gd_scene load_steps=8 format=3 uid="uid://c7ahiji6itgu0"]
 
 [ext_resource type="Texture2D" uid="uid://c3ytjpdrg488o" path="res://Sprites/coin.png" id="1_2qo34"]
 [ext_resource type="PhysicsMaterial" uid="uid://bmrcwa6hn5p8m" path="res://physicsmat.tres" id="1_g537i"]
 [ext_resource type="Script" uid="uid://ctb0fvi6g4y6l" path="res://Scripts/coin.gd" id="1_jgi06"]
+[ext_resource type="PackedScene" uid="uid://bj4sepsunr4ew" path="res://Scenes/coin_collect_particles.tscn" id="3_h2p6v"]
+[ext_resource type="AudioStream" uid="uid://cvn6d373nm1xa" path="res://Sound/spawn_coin.wav" id="4_ffmqm"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_jgi06"]
 radius = 3.0
@@ -10,11 +12,14 @@ radius = 3.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_2qo34"]
 radius = 3.0
 
-[node name="Coin" type="RigidBody2D"]
+[node name="Coin" type="RigidBody2D" node_paths=PackedStringArray("audioPlayer")]
 collision_layer = 32
 collision_mask = 5
 physics_material_override = ExtResource("1_g537i")
 script = ExtResource("1_jgi06")
+collect_particles = ExtResource("3_h2p6v")
+audioPlayer = NodePath("AudioStreamPlayer2D")
+coin_sound = ExtResource("4_ffmqm")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_2qo34")
@@ -30,6 +35,10 @@ shape = SubResource("CircleShape2D_2qo34")
 [node name="Timer" type="Timer" parent="."]
 
 [node name="SpawnTimer" type="Timer" parent="."]
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_ffmqm")
+volume_db = -12.0
 
 [connection signal="body_entered" from="PickUp" to="." method="_on_pick_up_body_entered"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

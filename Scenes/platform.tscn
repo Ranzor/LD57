@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://dfwlxui8revdt"]
+[gd_scene load_steps=5 format=3 uid="uid://dfwlxui8revdt"]
 
 [ext_resource type="Texture2D" uid="uid://dtn61e0j72dl0" path="res://Sprites/tiles.png" id="1_1rc8e"]
 [ext_resource type="Script" uid="uid://4h55jbud2xec" path="res://Scripts/platform.gd" id="1_n5262"]
+[ext_resource type="PackedScene" uid="uid://c0jdmjywmfd8s" path="res://Scenes/platform_destroy_particles.tscn" id="2_mrs20"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n5262"]
 size = Vector2(8, 4)
@@ -10,6 +11,7 @@ size = Vector2(8, 4)
 collision_layer = 3
 collision_mask = 3
 script = ExtResource("1_n5262")
+break_particles = ExtResource("2_mrs20")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_1rc8e")

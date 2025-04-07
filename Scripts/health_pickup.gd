@@ -7,7 +7,7 @@ var dealt_damage = false
 func _ready() -> void:
 	randomize()
 	$Pickup.body_entered.connect(_on_body_entered)
-	$Timer.start(randf_range(3.0,5.0))
+	$Timer.start(randf_range(10.0,30.0))
 	$SpawnTimer.start(0.2)
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	for i in state.get_contact_count():

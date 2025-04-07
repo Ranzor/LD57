@@ -21,13 +21,30 @@ extends CharacterBody2D
 @export var trail_texture : Texture2D
 @export var damage_cooldown = 1.0
 
+
+@export var min_light_energy := 0.0
+@export var max_light_energy := 1.0
+@export var min_light_range := 200.0
+@export var max_light_range := 400.0
+
+@export var coin_symbol : Sprite2D
+@export var no_coin_symbol : Sprite2D
+
+@export var jumpSound : AudioStreamWAV
+@export var audioPlayer : AudioStreamPlayer2D
+@export var hitHurt : AudioStreamWAV
+@export var powerUp : AudioStreamWAV
+@export var swordSwing : AudioStreamWAV
+@export var pickupCoin : AudioStreamWAV
+@export var hpUp : AudioStreamWAV
+
+
 var power_boost_active = false
 var power_boost_timer : Timer
 
 var current_damage = 2
 var base_damage = 2
 
-var coins = 0
 var fireball_unlocked = false
 var fireball_count = 0
 
@@ -75,6 +92,11 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	
+	Global.health = health
+	Global.fireball_count = fireball_count
+	Global.power_time = power_boost_timer.time_left
+	
+	if position.y > Global.depth: Global.depth = position.y
 	trail_timer += delta
 	if trail_timer >= trail_interval:
 		spawn_trail()
@@ -99,6 +121,8 @@ func _physics_process(delta: float) -> void:
 	
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("attack") && !is_attacking:
+		audioPlayer.stream = swordSwing
+		audioPlayer.play()
 		tiles_hit_this_attack.clear()
 		is_attacking = true
 		is_invincible = true
@@ -134,6 +158,8 @@ func handle_jump():
 	if Input.is_action_just_pressed("jump"):
 		jump_buffer = true
 		$JumpBuffer.start()
+		audioPlayer.stream = jumpSound
+		audioPlayer.play()
 	
 	if (coyote_time || is_on_floor()) && jump_buffer:
 		perform_jump()
@@ -195,8 +221,10 @@ func _on_sword_hit_box_body_entered(body: Node2D) -> void:
 		body.take_damage(current_damage/2)
 		$"../Camera2D".apply_shake(.1)
 			
-func take_damage(enemy_global_pos: Vector2):
+func take_damage(amount : int, enemy_global_pos: Vector2):
 	if !is_invincible:
+		audioPlayer.stream = hitHurt
+		audioPlayer.play()
 		Engine.time_scale = 0.05
 		await get_tree().create_timer(0.02).timeout
 		Engine.time_scale = 1.0
@@ -205,7 +233,7 @@ func take_damage(enemy_global_pos: Vector2):
 		knockback = dir_to_player * knockback_force
 		$"../Camera2D".apply_shake(1.0)
 		
-		health -= 5
+		health -= amount
 		$Sprite2D.modulate = Color(2,2,2)
 		var tween = create_tween().set_trans(Tween.TRANS_SINE)
 		tween.tween_property($Sprite2D, "modulate", Color.WHITE, 0.15)
@@ -223,15 +251,13 @@ func spawn_trail():
 	get_parent().add_child(trail)
 
 func collect_coin() -> void:
-	if not power_boost_active:
-		activate_power_boost(2,4)
-	coins += 1
-	print("Coins: ", coins)
-	if coins >= 10 and !fireball_unlocked:
-		fireball_unlocked = true
-		fireball_count = 3
+	Global.coins += 1
+	audioPlayer.stream = pickupCoin
+	audioPlayer.play()
 		
 func collect_health() -> void:
+	audioPlayer.stream = hpUp
+	audioPlayer.play()
 	health += 20
 		
 func throw_fireball():
@@ -245,19 +271,37 @@ func throw_fireball():
 func activate_power_boost(multiplier: float, duration : float):
 	current_damage = base_damage * multiplier
 	power_boost_active = true
+	audioPlayer.stream = powerUp
+	audioPlayer.play()
 	$Sprite2D.texture = power
 	
 	if power_boost_timer.time_left > 0:
 		power_boost_timer.stop()
 	
 	power_boost_timer.start(duration)
-		
-		
+	Global.power_duration = duration
 func _end_power_boost():
 	current_damage = base_damage
 	power_boost_active = false
 	$Sprite2D.texture = normal
+	
+func update_light_for_darkness(darkness: float):
+	$PointLight2D.energy = lerp(min_light_energy, max_light_energy, darkness)
+	$PointLight2D.height = lerp(min_light_range, max_light_range, darkness)
+	
+	$PointLight2D.color.s = 1.0 - darkness * 0.5
 
+func display_coin(cost : int):
+	if Global.coins >= cost:
+		coin_symbol.visible = true
+		no_coin_symbol.visible = false
+	else:
+		coin_symbol.visible = false
+		no_coin_symbol.visible = true
+		
+func hide_coin():
+	coin_symbol.visible = false
+	no_coin_symbol.visible = false
 
 func die():
-	get_tree().quit()
+	get_tree().change_scene_to_file("res://Scenes/start_menu.tscn")

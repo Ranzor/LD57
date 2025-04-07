@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://wjtu63f7bga7"]
+[gd_scene load_steps=6 format=3 uid="uid://wjtu63f7bga7"]
 
 [ext_resource type="Script" uid="uid://bxkhwuierpwkg" path="res://Scripts/fireball.gd" id="1_0mxqg"]
 [ext_resource type="PackedScene" uid="uid://b54i3okjfpg1p" path="res://Scenes/shrapnel.tscn" id="2_hcgvv"]
 [ext_resource type="Texture2D" uid="uid://c56d6u4vi3588" path="res://Sprites/fireball.png" id="2_ne4qj"]
+[ext_resource type="AudioStream" uid="uid://78j2ccn8oxkb" path="res://Sound/explosion.wav" id="3_hcgvv"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hcgvv"]
 radius = 3.0
@@ -12,6 +13,7 @@ collision_layer = 128
 collision_mask = 11
 script = ExtResource("1_0mxqg")
 shrapnel_scene = ExtResource("2_hcgvv")
+explosion_sound = ExtResource("3_hcgvv")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_ne4qj")

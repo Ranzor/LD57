@@ -1,8 +1,19 @@
-[gd_scene load_steps=13 format=3 uid="uid://drc7f16f18fq4"]
+[gd_scene load_steps=16 format=3 uid="uid://drc7f16f18fq4"]
 
 [ext_resource type="Texture2D" uid="uid://ce8a1iidnal5k" path="res://Sprites/Character.png" id="1_v0iea"]
 [ext_resource type="Script" uid="uid://cpolpfk1qlj27" path="res://Scripts/player.gd" id="2_cvnsp"]
 [ext_resource type="Texture2D" uid="uid://cvqr2bqw6rxvl" path="res://Sprites/Character_PowerSword.png" id="3_6t5aa"]
+[ext_resource type="Texture2D" uid="uid://c3ytjpdrg488o" path="res://Sprites/coin.png" id="4_vgqql"]
+
+[sub_resource type="Gradient" id="Gradient_6t5aa"]
+offsets = PackedFloat32Array(0.012987, 1)
+colors = PackedColorArray(1, 0.666667, 0.466667, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_vgqql"]
+gradient = SubResource("Gradient_6t5aa")
+fill = 1
+fill_from = Vector2(0.504587, 0.490826)
+fill_to = Vector2(1, 1)
 
 [sub_resource type="Animation" id="Animation_6t5aa"]
 length = 0.001
@@ -192,16 +203,35 @@ size = Vector2(4, 8)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6t5aa"]
 size = Vector2(9, 3)
 
-[node name="Player" type="CharacterBody2D" groups=["player"]]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("coin_symbol", "no_coin_symbol") groups=["player"]]
 collision_mask = 17
 script = ExtResource("2_cvnsp")
 normal = ExtResource("1_v0iea")
 power = ExtResource("3_6t5aa")
 trail_texture = ExtResource("1_v0iea")
+coin_symbol = NodePath("Sprite2D/Coin")
+no_coin_symbol = NodePath("Sprite2D/NoCoin")
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(0.500004, 0)
+scale = Vector2(1.01563, 1)
+energy = 1.5
+texture = SubResource("GradientTexture2D_vgqql")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_v0iea")
 hframes = 17
+
+[node name="Coin" type="Sprite2D" parent="Sprite2D"]
+visible = false
+position = Vector2(0, -6)
+texture = ExtResource("4_vgqql")
+
+[node name="NoCoin" type="Sprite2D" parent="Sprite2D"]
+visible = false
+modulate = Color(0.402757, 0.065346, 1.44392e-07, 1)
+position = Vector2(0, -6)
+texture = ExtResource("4_vgqql")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
