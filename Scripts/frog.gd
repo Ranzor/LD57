@@ -22,10 +22,16 @@ func _ready() -> void:
 	
 	
 func _physics_process(delta: float) -> void:
-	if not is_on_floor():
+
 		velocity.y += gravity * delta
-	else:
-		velocity.y = 0
+		velocity.x = 0
+		move_and_slide()
+
+		if !is_on_floor():
+			velocity.y = clamp(velocity.y, -INF, 500)
+		else:
+			velocity.y = 0
+	
 	
 func take_damage(amount : int, source_position: Vector2):
 	

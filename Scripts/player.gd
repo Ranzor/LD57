@@ -103,7 +103,7 @@ func _input(event: InputEvent) -> void:
 		is_attacking = true
 		is_invincible = true
 		animation.play("attack")
-		animation.speed_scale = 1.7
+		animation.speed_scale = 3
 		#fix hit box position
 	
 	if event.is_action_pressed("fire"):
@@ -189,11 +189,11 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 func _on_sword_hit_box_body_entered(body: Node2D) -> void:
 	
 	if body.is_in_group("enemy"):
-		body.take_damage(2, global_position)
-		$"../Camera2D".apply_shake(.3)
-	elif body.is_in_group("platform"):
-		body.take_damage(1)
+		body.take_damage(current_damage, global_position)
 		$"../Camera2D".apply_shake(.2)
+	elif body.is_in_group("platform"):
+		body.take_damage(current_damage/2)
+		$"../Camera2D".apply_shake(.1)
 			
 func take_damage(enemy_global_pos: Vector2):
 	if !is_invincible:

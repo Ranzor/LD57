@@ -165,24 +165,11 @@ func create_full_platform(world_y):
 			platform.global_position = tilemap_layer.map_to_local(Vector2i(x,world_y))
 			platform.set_biome(biome_y)
 			add_child(platform)
-			#tilemap_layer.set_cell(Vector2i(x, world_y), 0, Vector2i(0,biome_y))
 			
 		if (end - start) >= MIN_PLATFORM_LENGTH:
 			var spawn_x = start + (end - start) / 2
 			try_spawn_enemy(spawn_x, world_y -1)
 
-
-func cleanup_old_chunks():
-	var player_y = player.global_position.y
-	var cleanup_threashold = player_y - (MAX_CHUNKS * CHUNK_HEIGHT * tilemap_layer.rendering_quadrant_size)
-	
-	while generated_chunks.size() > 0 && generated_chunks[0] < cleanup_threashold:
-		var oldest_chunk = generated_chunks.pop_front()
-		for y in CHUNK_HEIGHT:
-			var world_y = oldest_chunk + y
-			for x in range(WALL_LEFT + 1, WALL_RIGHT):
-				tilemap_layer.erase_cell(Vector2i(x, world_y))
-	
 func _physics_process(delta: float) -> void:
 	var player_y = player.global_position.y
 	var player_tile_y = int(player_y / TILE_SIZE)
@@ -281,6 +268,6 @@ func spawn_hazard(x : int, y : int, biome: int):
 			hazard.sprite.frame = hazard.biome_lava
 			
 func update_difficulty():
-	var factor = log(current_depth / 500.0 + 1)  # Logarithmic scaling; adjust constants as needed
+	var factor = log(current_depth / 500.0 + 1)
 	ENEMY_SPAWN_CHANCE = clamp(BASE_SPAWN_CHANCE + factor * 0.05, 0.10, 0.5)
 	MAX_ENEMIES_PER_CHUNK = clamp(BASE_MAX_ENEMIES + factor * 2.0, 3.0, 10.0)

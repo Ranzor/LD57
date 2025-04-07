@@ -58,7 +58,7 @@ func _on_body_entered(body: Node2D) -> void:
 		body.take_damage(2)
 		explode()
 	elif body.is_in_group("enemy"):
-		body.take_damage(2, global_position)
+		body.take_damage(4, global_position)
 		explode()
 	elif body.name != "Player":
 		explode()

@@ -42,6 +42,5 @@ tile_set = ExtResource("5_wowpa")
 collision_mask = 2
 LevelGenerator = NodePath("../LevelGenerator")
 
-[node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("player")]
+[node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("4_3dryh")
-player = NodePath("../Player")

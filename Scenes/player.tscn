@@ -192,7 +192,7 @@ size = Vector2(4, 8)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6t5aa"]
 size = Vector2(9, 3)
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" groups=["player"]]
 collision_mask = 17
 script = ExtResource("2_cvnsp")
 normal = ExtResource("1_v0iea")
